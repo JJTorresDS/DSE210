@@ -8,10 +8,6 @@ import numpy as np
 
 
 ##### Problem 1: Integer Compositions
-A= {i for i in range(1,n+1)}
-k=2
-test = {i for i in range(1,n+1)}
-
 def compositions(k, n):
     
     def product(*args, repeat=1):
@@ -57,3 +53,25 @@ def composition_formula(k, n):
     return (len(compositions(k,n)), int(binom(n, k)))
 
 #### Problem 3: Contrained compositions
+n = 7
+m = [3, 2, 5]
+
+def constrained_compositions(n, m):
+    # inputs: n is of type 'int' and m is a list of integers
+    # output: a set of tuples
+    
+    tempComp = compositions(len(m), n)
+    
+    finalComp = set()        
+    for x in tempComp:
+        boolVector = []
+        counter = 0
+        for i in x:         
+            boolVector.append(i > m[counter])
+            counter += 1
+               
+        if sum(boolVector) == 0:
+            finalComp.add(x)
+               
+    return finalComp 
+    
