@@ -4,26 +4,37 @@ Created on Wed Mar  7 23:52:18 2018
 
 @author: jonas.j.torres
 """
-
-
-parts = set()
-
-
-#compute combinations of the possible elements. We can use the combinations
-#functions
-
-# example of 2 dice 3 and 4 faced:
-largest_face([2,5,8],8)
+#Usar la formula de constrained composition
+#1)tengo que buscar todas las combinaciones posible de los 3 dados
+#2)contar todas las permutaciones que cumplen con que el mayor de todos los
+#    numeros sea x_max
+#3) dividir la las permutaciones que cumplen este criterio por el numero
+#    total de permutaciones
 
 f = [2,5,8]
 x_max = 8
-#Usar la formula de constrained composition
-1)tengo que buscar todas las combinaciones posible de los 3 dados
-2)contar todas las permutaciones que cumplen con que el mayor de todos los
-    numeros sea x_max
-3) dividir la las permutaciones que cumplen este criterio por el numero
-    total de permutaciones
 
+#You can use one for loop to compute P(X<=x) and P(X<=x-1) and return 
+#the difference since the number of elements for both the computation is same.
+
+#I iteratively calculated P(X≤x) by multiplying the probablities of all dices 
+#with one another for all cases when X≤x. Then I did the same for P(X<=x-1) 
+#and returned the difference of both results. You really don't need any 
+#numpy/itertools functionalities to solve problem.
+
+ 
+def largest_face(f, x_max):
+    
+    p1=1
+    p2=1    
+    for die in f:
+        if die >= x_max:
+            A = np.array([i for i in range(1,die+1)])
+            e = sum(A<=x_max)
+            p1 *= e/die
+            p2 *= (e-1)/die
+        
+    return p1-p2
 
 def largest_face(f, x_max):
     
@@ -40,20 +51,19 @@ def largest_face(f, x_max):
     #Base case: Only one die
     if type(f)==int:
         # Posibles combinaciones del dado
-        A = {i for i in range(1,f+1)} 
+        A = {i for i in range(1,f[0]+1)} 
         # Si el número máximo esta en el dado entonces prob=1/|A|
         if x_max in A:
-            return 1/len(A)
+            return 1/float(len(A))
         else:
             return 0
   
     else:
         # Por cada dado en F
-        temp = list()
-        for die in f:
-            temp.extend([i for i in range(1,die+1)])
         
-        temp = set(product(temp, repeat=len(f)))
+        A = {i for i in range(1,max(f)+1)} 
+        
+        temp = set(product(A, repeat=len(f)))
         
         temp2 = set()     
         for x in temp:
@@ -73,7 +83,7 @@ def largest_face(f, x_max):
                 temp3.add(x)
                     
         
-        return len(temp3)/len(temp2)     
+        return len(temp3)/float(len(temp2))     
 
 # Face Sum
 def face_sum(m, s):
@@ -90,12 +100,11 @@ def face_sum(m, s):
             yield tuple(prod)
    
     # Por cada dado en F
-    temp = list()
     f = m
-    for die in f:
-        temp.extend([i for i in range(1,die+1)])
-    
-    temp = set(product(temp, repeat=len(f)))
+
+    A = {i for i in range(1,max(f)+1)} 
+        
+    temp = set(product(A, repeat=len(f)))
     
     temp2 = set()     
     for x in temp:
@@ -110,7 +119,7 @@ def face_sum(m, s):
     
     temp3 = constrained_compositions(s, m)
         
-    return len(temp3)/len(temp2)
+    return len(temp3)/float(len(temp2))
 
 # i.e (1,2), (2,2), (2,1) 
 # I could either loop through each element and create a boolean and some up
