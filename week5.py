@@ -39,41 +39,13 @@ def largest_face(f, x_max):
 
 
 # Face Sum
+
+m = [3,4,5]
+s = 3
+
 def face_sum(m, s):
-    #m=[3,4,5]
-    #s=3
-    def product(*args, repeat=1):
-        # product('ABCD', 'xy') --> Ax Ay Bx By Cx Cy Dx Dy
-        # product(range(2), repeat=3) --> 000 001 010 011 100 101 110 111
-        pools = [tuple(pool) for pool in args] * repeat
-        result = [[]]
-        for pool in pools:
-            result = [x+[y] for x in result for y in pool]
-        for prod in result:
-            yield tuple(prod)
-   
-    # Por cada dado en F
-    f = m
-
-    A = {i for i in range(1,max(f)+1)} 
+    ar = np.array(m)
+    events = constrained_compositions(s, m)
         
-    temp = set(product(A, repeat=len(f)))
-    
-    temp2 = set()     
-    for x in temp:
-        boolVector = []
-        counter = 0
-        for i in x:         
-            boolVector.append(i > f[counter])
-            counter += 1
-               
-        if sum(boolVector) == 0:
-            temp2.add(x)
-    
-    temp3 = constrained_compositions(s, m)
-        
-    return len(temp3)/float(len(temp2))
+    return len(events)/float(ar.prod())
 
-# i.e (1,2), (2,2), (2,1) 
-# I could either loop through each element and create a boolean and some up
-# the true values
